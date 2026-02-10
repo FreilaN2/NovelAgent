@@ -1,0 +1,20 @@
+# Servidor y API
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+
+# Base de Datos (Conexión con el MySQL de tu XAMPP)
+sqlalchemy==2.0.25
+pymysql==1.1.0
+cryptography==42.0.2
+
+# Variables de entorno y Validación
+pydantic==2.5.3
+pydantic-settings==2.1.0
+python-dotenv==1.0.1
+
+# Inteligencia Artificial (Traducción)
+openai==1.12.0
+tiktoken==0.5.2
+
+# Scraping (Para obtener las novelas)
+playwright==1.41.2
