@@ -4,7 +4,7 @@ from app.db.database import SessionLocal
 from app.core.config import settings
 from app.services.discovery import discover_new_chapters
 from app.services.scraper import process_pending_scrapes
-from app.services.translator import process_pending_translations
+# from app.services.translator import process_pending_translations
 
 # Configuración de logs para el worker
 logging.basicConfig(
@@ -30,8 +30,8 @@ async def main_worker():
             await process_pending_scrapes(db)
             
             # FASE 2: Traducir con Gemini el contenido extraído
-            logger.info("🔍 Fase 2: Procesando traducciones con Gemini...")
-            await process_pending_translations(db)
+          #  logger.info("🔍 Fase 2: Procesando traducciones con Gemini...")
+          #  await process_pending_translations(db)
             
         except Exception as e:
             logger.error(f"❌ Error crítico en el ciclo del worker: {e}")
