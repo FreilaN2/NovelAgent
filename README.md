@@ -33,6 +33,8 @@ Es crucial para que el **Discovery** y el **Scraper** puedan navegar por SkyNove
 
 playwright install chromium
 
+pip install pydantic-settings
+
 ### 3. Configuración de Variables de Entorno
 
 Crea un archivo `.env` en la raíz del proyecto:
