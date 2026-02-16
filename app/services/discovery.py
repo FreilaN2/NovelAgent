@@ -61,10 +61,21 @@ async def discover_new_chapters(db: Session):
                         if f_el:
                             fecha_text = (await f_el.inner_text()).strip()
 
-                        # portada
-                        img_el = await page.query_selector("div.booknav2 img")
-                        if img_el:
-                            portada_img = await img_el.get_attribute('src')
+                        # Extraer el ID de la novela de la URL
+                        novel_id_match = re.search(r'/book/(\d+)', portada_url)
+                        portada_img = None
+                        if novel_id_match:
+                            novel_id = novel_id_match.group(1)
+                            # Buscar imagen cuyo src contenga el ID de la novela
+                            img_el = await page.query_selector(f'img[src*="{novel_id}"]')
+                            if img_el:
+                                portada_img = await img_el.get_attribute('src')
+                        
+                        # Fallback: buscar por alt con el título
+                        if not portada_img and titulo:
+                            img_el = await page.query_selector(f'img[alt="{titulo}"]')
+                            if img_el:
+                                portada_img = await img_el.get_attribute('src')
 
                         # descripción: se muestra al clicar '#li_info' (twkan)
                         descripcion = None
