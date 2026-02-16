@@ -41,39 +41,38 @@ async def scrape_chapter_content(url: str, selector_css: str = None):
 
             texto_final = ""
 
-            # ESTRATEGIA A: Selector CSS específico (Si viene de la BD)
-            if selector_css:
-                try:
-                    await page.wait_for_selector(selector_css, timeout=3000)
-                    texto_final = await page.inner_text(selector_css)
-                    logger.info("✅ Texto extraído usando Selector CSS.")
-                except:
-                    logger.warning(f"⚠️ El selector '{selector_css}' no funcionó, probando método automático...")
+            # ESTRATEGIA SOLICITADA
+            # 1. Intentar por ID específico (Visto en inspección: #txtcontent0)
+            try:
+                content_element = await page.query_selector("#txtcontent0")
+                if content_element:
+                    texto_final = await content_element.inner_text()
+                    logger.info("✅ Texto extraído usando ID #txtcontent0")
+            except:
+                pass
 
-            # ESTRATEGIA B: Algoritmo de Densidad (Si falla el selector o no hay)
-            if not texto_final or len(texto_final) < 500:
+            if not texto_final:
                 texto_final = await page.evaluate("""() => {
-                    // Busca el contenedor con más texto y menos enlaces
-                    const divs = Array.from(document.querySelectorAll('div, article, section, .reading-content, .entry-content'));
-                    let maxLen = 0;
-                    let content = "";
-                    
-                    divs.forEach(div => {
-                        const text = div.innerText || "";
-                        // Filtro: Más de 0 caracteres y menos de 20 enlaces (para evitar footers/headers)
-                        if (text.length > maxLen && div.querySelectorAll('a').length < 20) {
-                            maxLen = text.length;
-                            content = text;
+                    const nav = document.querySelector('.txtnav');
+                    if (nav) {
+                        const contentDiv = nav.querySelector('div[id^="txtcontent"]');
+                        if (contentDiv) return contentDiv.innerText;
+                        
+                        const children = Array.from(nav.children);
+                        if (children.length >= 4) {
+                            return children[3].innerText;
                         }
-                    });
-                    return content;
+                    }
+                    return "";
                 }""")
+                if texto_final:
+                    logger.info("✅ Texto extraído usando estructura DOM (.txtnav hijo #4)")
 
             # Validación final
-            if texto_final and len(texto_final.strip()) > 300: # Bajé un poco el límite por si hay capítulos cortos
+            if texto_final and len(texto_final.strip()) > 50:
                 return texto_final.strip()
             else:
-                logger.error("❌ No se pudo extraer texto válido (muy corto o vacío).")
+                logger.error("❌ No se pudo extraer texto válido (vacío o muy corto).")
                 return None
 
         except Exception as e:
