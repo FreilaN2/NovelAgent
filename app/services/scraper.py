@@ -41,8 +41,16 @@ async def scrape_chapter_content(url: str, selector_css: str = None):
 
             texto_final = ""
 
-            # ESTRATEGIA SOLICITADA
-            # 1. Intentar por ID específico (Visto en inspección: #txtcontent0)
+            # PASO 1: Eliminar anuncios antes de extraer (evita texto en inglés)
+            await page.evaluate("""() => {
+                // Eliminar todos los elementos publicitarios
+                const ads = document.querySelectorAll('.txtad, .exo-native-widget, [class*="adv"], [id*="adv"]');
+                ads.forEach(ad => ad.remove());
+            }""")
+            logger.info("🧹 Anuncios eliminados del DOM")
+
+            # PASO 2: Extraer texto limpio del contenido
+            # Estrategia A: Por ID específico (#txtcontent0)
             try:
                 content_element = await page.query_selector("#txtcontent0")
                 if content_element:
@@ -51,6 +59,7 @@ async def scrape_chapter_content(url: str, selector_css: str = None):
             except:
                 pass
 
+            # Estrategia B: Por estructura DOM (fallback)
             if not texto_final:
                 texto_final = await page.evaluate("""() => {
                     const nav = document.querySelector('.txtnav');
