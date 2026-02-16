@@ -88,3 +88,14 @@ class FuenteScraping(Base):
     requiere_vpn = Column(Boolean, default=False)
     requiere_login = Column(Boolean, default=False)
     credenciales_json = Column(JSON)
+
+
+class AutoresNovelas(Base):
+    __tablename__ = "autores_novelas"
+
+    id_autor = Column(Integer, primary_key=True, index=True)
+    nombre_autor = Column(String(100), nullable=False)
+    biografia = Column(Text)
+    otras_obras = Column(JSON)
+    seguidores = Column(Integer, default=0)
+    # índice se puede crear desde migraciones si se desea
