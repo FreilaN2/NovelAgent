@@ -98,7 +98,7 @@ async def process_pending_scrapes(db: Session):
     pendientes = db.query(Capitulo).filter(
         Capitulo.contenido_original == None,
         Capitulo.fuente_url != None
-    ).limit(3).all()
+    ).limit(10).all()
 
     if not pendientes:
         logger.info("💤 No hay capítulos pendientes de scraping.")

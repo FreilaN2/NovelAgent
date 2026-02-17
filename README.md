@@ -31,7 +31,11 @@ pip install sqlalchemy mysql-connector-python playwright google-genai python-dot
 
 Es crucial para que el **Discovery** y el **Scraper** puedan navegar por SkyNovels:
 
+pip install -r requirements.txt
+
 playwright install chromium
+
+pip install pymysql
 
 pip install pydantic-settings
 
