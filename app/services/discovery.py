@@ -352,6 +352,14 @@ async def discover_new_chapters(db: Session):
                         nuevos_en_db += 1
 
                 db.commit()
+                
+                # Actualizar el total de capítulos en la novela
+                if total_detectados > 0:
+                    novela.total_capitulos_originales = total_detectados
+                    db.add(novela)
+                    db.commit()
+                    logger.info(f"📊 Total de capítulos actualizado: {total_detectados}")
+                
                 logger.info(f"✅ Proceso terminado: {nuevos_en_db} capítulos nuevos añadidos.")
 
             except Exception as e:
