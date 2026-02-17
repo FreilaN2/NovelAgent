@@ -35,7 +35,7 @@ async def discover_new_chapters(db: Session):
                     portada_url = url
 
                 # Sólo intentamos si cover distinto o faltan datos
-                await page.goto(portada_url, timeout=60000, wait_until="networkidle")
+                await page.goto(portada_url, timeout=60000, wait_until="domcontentloaded")
                 await asyncio.sleep(1)
 
                 # Intento específico para twkan.com (más fiable para portada)
@@ -287,7 +287,7 @@ async def discover_new_chapters(db: Session):
             logger.info(f"🔍 Patrullando: {novela.titulo_original}")
             
             try:
-                await page.goto(url, timeout=60000, wait_until="networkidle")
+                await page.goto(url, timeout=60000, wait_until="domcontentloaded")
                 await asyncio.sleep(2)
 
                 # --- PASO 1: EXPANDIR TODO (Igual que antes) ---
